@@ -1,38 +1,21 @@
-import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, OrbitControls } from "@react-three/drei";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { TalkingAvatarView } from "@interviewflowai/talking-avatar/react";
 import { Mic, MicOff, Send, Volume2, VolumeX, Sparkles, LoaderCircle } from "lucide-react";
 import "./herwell-voice.css";
 
 const API = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
 
-function AvatarFace({ speaking, level }) {
-  const mouth = useRef();
-  const head = useRef();
-  useFrame((state, delta) => {
-    if (head.current) head.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.4) * 0.07;
-    if (mouth.current) {
-      const target = speaking ? 0.08 + Math.min(0.85, level * 1.4) : 0.07;
-      mouth.current.scale.y += (target - mouth.current.scale.y) * Math.min(1, delta * 13);
-    }
-  });
-  return <group ref={head} position={[0, -0.1, 0]}>
-    <mesh position={[0, -0.68, -0.05]}><capsuleGeometry args={[0.42, 0.58, 8, 16]} /><meshStandardMaterial color="#d7aa9e" /></mesh>
-    <mesh position={[0, 0.1, 0]}><sphereGeometry args={[0.8, 40, 40]} /><meshStandardMaterial color="#e7bfb1" roughness={0.8} /></mesh>
-    <mesh position={[0, 0.48, -0.03]} scale={[1.03, 0.72, 1]}><sphereGeometry args={[0.79, 40, 32]} /><meshStandardMaterial color="#3d2945" roughness={0.9} /></mesh>
-    <mesh position={[-0.29, 0.17, 0.68]}><sphereGeometry args={[0.09, 20, 20]} /><meshStandardMaterial color="#302333" /></mesh>
-    <mesh position={[0.29, 0.17, 0.68]}><sphereGeometry args={[0.09, 20, 20]} /><meshStandardMaterial color="#302333" /></mesh>
-    <mesh position={[0, -0.02, 0.77]}><sphereGeometry args={[0.065, 20, 20]} /><meshStandardMaterial color="#c99183" /></mesh>
-    <mesh ref={mouth} position={[0, -0.28, 0.735]} scale={[0.18, 0.07, 0.035]}><sphereGeometry args={[1, 24, 16]} /><meshStandardMaterial color="#582c3c" /></mesh>
-  </group>;
-}
-
-function AvatarScene({ speaking, level }) {
-  return <Canvas camera={{ position: [0, 0.12, 4], fov: 36 }} dpr={[1, 1.5]}>
-    <ambientLight intensity={1.5} /><directionalLight position={[3, 4, 5]} intensity={2} />
-    <Suspense fallback={null}><AvatarFace speaking={speaking} level={level} /><Environment preset="studio" /></Suspense>
-    <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={1.2} maxPolarAngle={1.9} />
-  </Canvas>;
+function RealisticAvatar({ speaking, avatarRef }) {
+  return (
+    <div style={{ width: "100%", height: 360, borderRadius: "12px", overflow: "hidden" }}>
+      <TalkingAvatarView
+        ref={avatarRef}
+        avatarUrl="/avatar.glb"
+        modelUrl="/sdk/viseme-model.bin"
+        onError={(error) => console.error("Avatar error:", error)}
+      />
+    </div>
+  );
 }
 
 export default function HerwellVoiceAssistant() {
@@ -45,6 +28,7 @@ export default function HerwellVoiceAssistant() {
   const [level, setLevel] = useState(0);
   const recorder = useRef(null), stream = useRef(null), chunks = useRef([]);
   const audio = useRef(null), audioContext = useRef(null), analyser = useRef(null), raf = useRef(null);
+  const avatar = useRef(null);
 
   useEffect(() => () => {
     stream.current?.getTracks().forEach(t => t.stop());
@@ -56,8 +40,23 @@ export default function HerwellVoiceAssistant() {
   const playAudio = useCallback(async (blob) => {
     if (muted) return;
     audio.current?.pause();
-    const player = new Audio(URL.createObjectURL(blob));
+    
+    // Create audio URL for avatar
+    const audioUrl = URL.createObjectURL(blob);
+    
+    // Make avatar speak with the audio first
+    if (avatar.current) {
+      try {
+        await avatar.current.speak(audioUrl);
+      } catch (e) {
+        console.log("Avatar speaking error:", e);
+        // Fall back to normal audio playback
+      }
+    }
+    
+    const player = new Audio(audioUrl);
     audio.current = player;
+    
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       const ctx = new Ctx(); audioContext.current = ctx;
@@ -75,7 +74,7 @@ export default function HerwellVoiceAssistant() {
       };
       player.onplay = () => { ctx.resume(); tick(); };
     } catch { /* Audio can still play if analysis is unavailable. */ }
-    player.onended = () => { setStatus("idle"); setLevel(0); URL.revokeObjectURL(player.src); };
+    player.onended = () => { setStatus("idle"); setLevel(0); URL.revokeObjectURL(audioUrl); };
     player.onerror = () => { setStatus("idle"); setError("Impossible de lire l'audio."); };
     setStatus("speaking");
     await player.play();
@@ -131,7 +130,7 @@ export default function HerwellVoiceAssistant() {
     <div className="hw-layout">
       <div className={`hw-avatar ${speaking ? "speaking" : ""}`}>
         <div className="hw-label">● PRIVATE SESSION · LOCAL MODE</div>
-        <div className="hw-canvas"><AvatarScene speaking={speaking} level={level} /></div>
+        <div className="hw-canvas"><RealisticAvatar speaking={speaking} avatarRef={avatar} /></div>
         <div className="hw-caption"><b>HERwell</b><span>{status === "listening" ? "I'm listening…" : status === "transcribing" ? "Understanding your voice…" : status === "thinking" ? "Thinking carefully…" : speaking ? "Speaking with you…" : "Here for you, whenever you're ready."}</span></div>
       </div>
       <div className="hw-chat">

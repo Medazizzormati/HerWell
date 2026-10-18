@@ -1,0 +1,19 @@
+# IMPORTANT: Replace this file with your actual 3D avatar model (.glb format)
+# 
+# Options for getting a 3D avatar:
+# 1. InterviewFlow AI: Download from your dashboard (https://interviewflow.ai)
+# 2. Ready Player Me: Create avatar at https://readyplayer.me
+# 3. Mixamo: Get avatars from https://www.mixamo.com
+# 4. Sketchfab: Download from https://sketchfab.com (check license)
+#
+# For HERwell, use a professional female avatar that represents:
+# - Diversity and inclusivity
+# - Professional appearance
+# - Clear facial features for lip-sync
+#
+# Recommended specs:
+# - Format: .glb or .gltf
+# - Poly count: < 50,000 for web performance
+# - Size: < 10MB
+# - Include facial blend shapes for lip-sync
+

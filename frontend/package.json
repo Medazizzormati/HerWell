@@ -10,8 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.9",
-    "@react-three/fiber": "^9.8.2",
+    "@interviewflowai/talking-avatar": "^0.1.3",
     "@vitejs/plugin-react": "latest",
     "lucide-react": "latest",
     "react": "latest",
