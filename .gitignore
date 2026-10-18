@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+dist/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist-info/
+.pytest_cache/
+.coverage
+*.cover
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+*.toml
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring Boot
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# Build
+build/
+*.jar
+*.war
+*.ear
+
+# Temporary
+*.tmp
+*.temp

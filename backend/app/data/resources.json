@@ -1,0 +1,83 @@
+[
+  {
+    "title": "Découper une tâche",
+    "category": "study_planning",
+    "content": "Transformez une tâche importante en petites étapes de 15 à 30 minutes. Choisissez une prochaine action précise et réaliste, puis réévaluez votre progression.",
+    "source_label": "Rédigé par l'équipe — contenu éducatif non médical"
+  },
+  {
+    "title": "Préparer une séance de révision",
+    "category": "study_planning",
+    "content": "Définissez un objectif pour la séance, éloignez les distractions, travaillez sur une période réaliste et terminez en notant la prochaine étape. Adaptez la durée à votre énergie.",
+    "source_label": "Rédigé par l'équipe — contenu éducatif non médical"
+  },
+  {
+    "title": "Prévoir des pauses",
+    "category": "healthy_habits",
+    "content": "Planifiez de courtes pauses entre les périodes de concentration. Buvez de l'eau, étirez-vous ou éloignez-vous de l'écran. Les besoins varient selon les personnes.",
+    "source_label": "Rédigé par l'équipe — contenu éducatif non médical"
+  },
+  {
+    "title": "Routine de sommeil régulière",
+    "category": "healthy_habits",
+    "content": "Essayez de garder des horaires de sommeil relativement réguliers et de créer une routine calme avant le coucher. Cette fiche est éducative et ne remplace pas un avis professionnel.",
+    "source_label": "Rédigé par l'équipe — contenu éducatif non médical"
+  },
+  {
+    "title": "Faire face au stress des examens",
+    "category": "wellbeing",
+    "content": "Identifiez la prochaine petite étape, respirez lentement si cela vous aide, et parlez à une personne de confiance si le stress devient difficile à gérer. Demander de l'aide est légitime.",
+    "source_label": "Rédigé par l'équipe — contenu éducatif non médical"
+  },
+  {
+    "title": "Demander du soutien",
+    "category": "support",
+    "content": "Vous pouvez parler à une personne de confiance, au service d'accompagnement de votre établissement ou à un professionnel qualifié. Les ressources locales doivent être vérifiées avant publication.",
+    "source_label": "Rédigé par l'équipe — contenu éducatif non médical"
+  },
+  {
+    "title": "Comprendre le cycle menstruel",
+    "category": "menstrual_health",
+    "content": "Le cycle menstruel est un processus naturel. Il dure généralement entre 21 et 35 jours, avec une moyenne de 28 jours. Les variations sont normales. Le cycle est régulé par des hormones. Ces informations sont générales et éducatives.",
+    "source_label": "Organisation mondiale de la Santé (OMS)",
+    "source_url": "https://www.who.int/news-room/fact-sheets/detail/menstrual-health-and-hygiene",
+    "language": "fr",
+    "verification_status": "verified"
+  },
+  {
+    "title": "Gérer les crampes menstruelles",
+    "category": "menstrual_health",
+    "content": "Les crampes menstruelles sont causées par des contractions de l'utérus. Des mesures générales comme l'application de chaleur, le repos léger et l'hydratation peuvent aider. Si la douleur est sévère ou interfère avec les activités quotidiennes, consultez un professionnel de santé.",
+    "source_label": "Organisation mondiale de la Santé (OMS)",
+    "source_url": "https://www.who.int/news-room/fact-sheets/detail/menstrual-health-and-hygiene",
+    "language": "fr",
+    "verification_status": "verified"
+  },
+  {
+    "title": "Hygiène menstruelle",
+    "category": "menstrual_health",
+    "content": "Une bonne hygiène menstruelle est importante pour la santé et le confort. Changez régulièrement les protections hygiéniques, lavez-vous avec de l'eau et du savon doux, et utilisez des produits adaptés. Ces pratiques sont générales et chaque personne peut avoir des besoins différents.",
+    "source_label": "Organisation mondiale de la Santé (OMS)",
+    "source_url": "https://www.who.int/news-room/fact-sheets/detail/menstrual-health-and-hygiene",
+    "language": "fr",
+    "verification_status": "verified"
+  },
+  {
+    "title": "Quand consulter un médecin",
+    "category": "menstrual_health",
+    "content": "Consultez un professionnel de santé si vous ressentez une douleur sévère, des saignements très abondants, des cycles très irréguliers après les premiers mois, ou d'autres symptômes préoccupants. Ces informations sont générales et ne remplacent pas un avis médical personnalisé.",
+    "source_label": "Organisation mondiale de la Santé (OMS)",
+    "source_url": "https://www.who.int/news-room/fact-sheets/detail/menstrual-health-and-hygiene",
+    "language": "fr",
+    "verification_status": "verified"
+  },
+  {
+    "title": "Syndrome prémenstruel (SPM)",
+    "category": "menstrual_health",
+    "content": "Le syndrome prémenstruel regroupe divers symptômes physiques et émotionnels qui peuvent survenir avant les règles. Ils varient d'une personne à l'autre. Si les symptômes sont sévères et affectent la qualité de vie, parlez-en à un professionnel de santé.",
+    "source_label": "Organisation mondiale de la Santé (OMS)",
+    "source_url": "https://www.who.int/news-room/fact-sheets/detail/menstrual-health-and-hygiene",
+    "language": "fr",
+    "verification_status": "verified"
+  }
+]
