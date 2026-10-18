@@ -247,7 +247,7 @@ async def technical_chat(payload: TechnicalChatRequest, db: Session = Depends(ge
         full_message = f"{project_context}\n\n{full_message}"
     
     # Run chat with enhanced context and project_id for RAG
-    result = await run_chat(db, full_message, project_id=payload.project_id)
+    result = run_chat(db, full_message, project_id=payload.project_id)
     
     # Save conversation if project_id is provided
     if payload.project_id:
