@@ -104,7 +104,8 @@ export default function HerwellVoiceAssistant() {
       });
       if (!res.ok) { const data = await res.json().catch(() => ({})); throw new Error(data.detail || `Erreur HTTP ${res.status}`); }
       const data = await res.json();
-      const spoken = data.answer || data.text || decodeURIComponent(res.headers.get("X-Herwell-Answer") || "");
+      // Use the dynamic API response - prioritize 'answer' field from backend
+      const spoken = data.answer || data.text || data.response || decodeURIComponent(res.headers.get("X-Herwell-Answer") || "");
       if (spoken) setAnswer(spoken);
       // Skip audio playback for now (TTS not configured)
       setStatus("idle");
