@@ -292,7 +292,7 @@ function MoodPage() {
 
         <button type="submit" className="btn solid">Save check-in</button>
 
-        {message && <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--gold-d)' }}>{message}</p>}
+        {message && <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--primary)' }}>{message}</p>}
       </form>
     </div>
   </div>;
@@ -433,7 +433,7 @@ function PlannerPage() {
                   height: '24px',
                   border: '1px solid var(--line)',
                   borderRadius: '6px',
-                  background: t.completed ? 'var(--gold-d)' : '#fff',
+                  background: t.completed ? 'var(--primary)' : '#fff',
                   color: t.completed ? '#fff' : 'var(--ink)',
                   cursor: 'pointer'
                 }}
@@ -491,7 +491,7 @@ function ResourcesPage() {
       {filtered.map((r, i) => (
         <article className="card" key={i}>
           <div className="card-body">
-            <small style={{ color: 'var(--gold-d)', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em' }}>
+            <small style={{ color: 'var(--primary)', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em' }}>
               {r.category.replace('_', ' ')}
             </small>
             <h3>{r.title}</h3>
@@ -631,7 +631,7 @@ function SupportPage() {
 
     <div className="panel">
       <h3>Verified local contacts</h3>
-      <p className="warning" style={{ color: 'var(--gold-d)' }}>
+      <p className="warning" style={{ color: 'var(--primary)' }}>
         <Phone size={16} style={{ display: 'inline', verticalAlign: 'middle' }} />
         {' '}No verified contacts are configured in this demo. For production, add only verified local emergency and support contacts before deployment.
       </p>
@@ -849,7 +849,7 @@ function MenstrualPage() {
         <div className="panel" style={{ marginTop: '26px', background: 'var(--blush)' }}>
           <h3>Privacy controls</h3>
           <p className="fine">Your menstrual health data is stored separately from other features.</p>
-          <button onClick={deleteAll} className="btn" style={{ borderColor: '#e07a7a', color: '#e07a7a' }}>
+          <button onClick={deleteAll} className="btn" style={{ borderColor: 'var(--primary)', color: 'var(--primary)' }}>
             Delete all menstrual data
           </button>
         </div>
