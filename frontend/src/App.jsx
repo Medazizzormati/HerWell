@@ -4,6 +4,7 @@ import { Activity, CalendarDays, Heart, MessageCircle, BookOpen, ShieldCheck, Pl
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { api } from './services/api.js';
 import HerwellVoiceAssistant from './components/HerwellVoiceAssistant';
+import ProfessionalCalendar from './components/ProfessionalCalendar';
 
 const nav = [
   { to: '/', label: 'Dashboard' },
@@ -12,6 +13,7 @@ const nav = [
   { to: '/technical', label: 'Technical PFE' },
   { to: '/menstrual', label: 'Women\'s Wellbeing' },
   { to: '/planner', label: 'Study planner' },
+  { to: '/calendar', label: 'Calendar' },
   { to: '/resources', label: 'Resources' },
   { to: '/breathing', label: 'Breathing' },
   { to: '/settings', label: 'Settings' },
@@ -896,6 +898,7 @@ export default function App() {
     <Route path="/technical" element={<Layout><TechnicalPage /></Layout>} />
     <Route path="/menstrual" element={<Layout><MenstrualPage /></Layout>} />
     <Route path="/planner" element={<Layout><PlannerPage /></Layout>} />
+    <Route path="/calendar" element={<Layout><ProfessionalCalendar /></Layout>} />
     <Route path="/resources" element={<Layout><ResourcesPage /></Layout>} />
     <Route path="/breathing" element={<Layout><BreathingPage /></Layout>} />
     <Route path="/settings" element={<Layout><SettingsPage /></Layout>} />
