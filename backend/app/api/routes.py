@@ -103,7 +103,7 @@ def list_plans(db: Session = Depends(get_db)):
 @router.post("/chat")
 async def chat(payload: ChatRequest, db: Session = Depends(get_db)):
     seed_resources(db)
-    return await run_chat(db, payload.message)
+    return run_chat(db, payload.message)
 
 @router.get("/support-resources")
 def get_support_resources():

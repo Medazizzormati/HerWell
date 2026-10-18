@@ -16,14 +16,14 @@ class ChatState(TypedDict, total=False):
 
 def classify_intent(message: str) -> str:
     text = message.lower()
-    if any(word in text for word in ["planning", "schedule", "study", "exam", "devoir", "révision", "قراية", "امتحان"]):
+    if any(word in text for word in ["planning", "schedule", "study", "exam", "devoir", "révision", "قراءة", "امتحان"]):
         return "study_planning"
     if any(word in text for word in ["sleep", "stress", "anx", "burnout", "fatigue", "قلق", "تعب", "متوترة"]):
         return "wellbeing"
     return "general_support"
 
 def build_graph(db: Session):
-    async def precheck(state: ChatState):
+    def precheck(state: ChatState):
         if safety_precheck(state["message"]):
             return {"safety": True, "response": (
                 "Je suis désolé que vous traversiez cela. Je ne peux pas évaluer votre sécurité à distance. "
@@ -32,7 +32,7 @@ def build_graph(db: Session):
             )}
         return {"safety": False, "intent": classify_intent(state["message"])}
 
-    async def retrieve(state: ChatState):
+    def retrieve(state: ChatState):
         # If project_id is provided, retrieve project documents + general resources
         if state.get("project_id"):
             project_docs = retrieve_project_documents(db, state["project_id"], state["message"])
@@ -45,8 +45,8 @@ def build_graph(db: Session):
         # Otherwise, just general resources
         return {"resources": retrieve_resources(db, state["message"])}
 
-    async def respond(state: ChatState):
-        answer, degraded = await generate_response(state["message"], state.get("resources", []), state.get("intent", "general_support"))
+    def respond(state: ChatState):
+        answer, degraded = generate_response(state["message"], state.get("resources", []), state.get("intent", "general_support"))
         return {"response": safety_postcheck(answer), "degraded": degraded}
 
     graph = StateGraph(ChatState)
@@ -59,9 +59,10 @@ def build_graph(db: Session):
     graph.add_edge("respond", END)
     return graph.compile()
 
-async def run_chat(db: Session, message: str, project_id: int = None) -> dict:
+def run_chat(db: Session, message: str, project_id: int = None) -> dict:
     graph = build_graph(db)
-    result = await graph.ainvoke({"message": message, "project_id": project_id})
+    # Use synchronous invoke
+    result = graph.invoke({"message": message, "project_id": project_id})
     
     # Ensure result is a dict
     if not isinstance(result, dict):

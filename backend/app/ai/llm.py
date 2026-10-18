@@ -1,6 +1,6 @@
 from ..config import settings
 
-async def generate_response(message: str, resources: list[dict], intent: str) -> tuple[str, bool]:
+def generate_response(message: str, resources: list[dict], intent: str) -> tuple[str, bool]:
     provider = settings.llm_provider.lower()
     
     # Get API key based on provider
@@ -68,17 +68,17 @@ async def generate_response(message: str, resources: list[dict], intent: str) ->
                 print(f"Gemini error: {e}")
                 raise
         if provider == "openai":
-            from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key=api_key)
-            result = await client.chat.completions.create(
+            from openai import OpenAI
+            client = OpenAI(api_key=api_key)
+            result = client.chat.completions.create(
                 model=settings.llm_model or "gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
             )
             return result.choices[0].message.content or "", False
         if provider == "anthropic":
-            from anthropic import AsyncAnthropic
-            client = AsyncAnthropic(api_key=api_key)
-            result = await client.messages.create(
+            from anthropic import Anthropic
+            client = Anthropic(api_key=api_key)
+            result = client.messages.create(
                 model=settings.llm_model or "claude-3-5-haiku-latest",
                 max_tokens=700,
                 messages=[{"role": "user", "content": prompt}]

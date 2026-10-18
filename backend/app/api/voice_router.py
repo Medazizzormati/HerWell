@@ -88,7 +88,9 @@ async def transcribe_voice(file: UploadFile = File(...)):
 @router.post("/chat")
 async def chat_with_voice(payload: ChatRequest):
     try:
-        answer = await answer_with_existing_graph(payload.message.strip(), payload.session_id)
+        answer = await asyncio.to_thread(
+            answer_with_existing_graph, payload.message.strip(), payload.session_id
+        )
     except GraphNotConfigured as exc:
         raise HTTPException(503, str(exc)) from exc
     except Exception as exc:
