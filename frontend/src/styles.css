@@ -8,6 +8,8 @@
   --primary: #652D90;
   --primary-light: #8B4DB8;
   --primary-dark: #4A1F66;
+  --gold: #C6A56B;
+  --gold-d: #9A7A3E;
   --ink: #4A342C;
   --mute: #7A645B;
   --line: #E9DCCB;
@@ -175,7 +177,7 @@ button, a {
   font-family: var(--serif);
   font-size: 28px;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--ink);
   letter-spacing: 0.01em;
 }
 
@@ -183,7 +185,7 @@ button, a {
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--primary);
+  color: var(--gold-d);
 }
 
 .hdr nav {
@@ -231,7 +233,7 @@ button, a {
 .burger {
   display: none;
   background: none;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--line);
   border-radius: 12px;
   width: 46px;
   height: 42px;
@@ -246,7 +248,7 @@ button, a {
   display: block;
   width: 20px;
   height: 1.5px;
-  background: var(--primary);
+  background: var(--ink);
   transition: transform 0.3s, opacity 0.3s;
 }
 
@@ -324,7 +326,7 @@ h3 {
   align-items: center;
   gap: 8px;
   padding: 13px 28px;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--gold);
   border-radius: 999px;
   text-decoration: none;
   font-size: 15px;
@@ -336,8 +338,7 @@ h3 {
 }
 
 .btn:hover {
-  background: var(--primary-light);
-  color: #fff;
+  background: var(--beige);
   transform: translateY(-1px);
 }
 
@@ -354,7 +355,7 @@ h3 {
 }
 
 a:focus-visible, button:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--gold-d);
   outline-offset: 3px;
 }
 
@@ -363,13 +364,13 @@ a:focus-visible, button:focus-visible {
   background: var(--ivory);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 14px 34px rgba(101, 45, 144, 0.1);
+  box-shadow: 0 14px 34px rgba(74, 52, 44, 0.08);
   transition: transform 0.35s, box-shadow 0.35s;
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 24px 44px rgba(101, 45, 144, 0.18);
+  box-shadow: 0 24px 44px rgba(74, 52, 44, 0.14);
 }
 
 .card img {
@@ -388,7 +389,7 @@ a:focus-visible, button:focus-visible {
 }
 
 .card-body .price {
-  color: var(--primary);
+  color: var(--gold-d);
   font-weight: 500;
   font-size: 18px;
   margin: 8px 0;
@@ -641,7 +642,7 @@ input:focus, textarea:focus, select:focus {
   height: 7px;
   margin-right: 5px;
   border-radius: 50%;
-  background: var(--primary);
+  background: #3cba85;
 }
 
 .hw-layout {
@@ -734,7 +735,7 @@ input:focus, textarea:focus, select:focus {
 .hw-answer b, .hw-transcript b {
   font-size: 9px;
   letter-spacing: 0.14em;
-  color: var(--primary);
+  color: var(--gold-d);
 }
 
 .hw-answer p, .hw-transcript p {
@@ -778,7 +779,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .hw-input input:focus {
-  border-color: var(--primary);
+  border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(198, 165, 107, 0.13);
 }
 
@@ -828,9 +829,9 @@ input:focus, textarea:focus, select:focus {
 }
 
 .hw-mic.recording {
-  border-color: var(--primary);
-  background: #f0e6f5;
-  color: var(--primary);
+  border-color: var(--blush);
+  background: #fff0f3;
+  color: #b44264;
 }
 
 .hw-volume {
@@ -841,17 +842,17 @@ input:focus, textarea:focus, select:focus {
 }
 
 .hw-spin {
-  color: var(--primary);
+  color: var(--gold-d);
   animation: hwspin 1s linear infinite;
 }
 
 .hw-error {
   margin-top: 12px;
   padding: 11px 13px;
-  border: 1px solid var(--primary);
+  border: 1px solid #f4cbd3;
   border-radius: 11px;
-  background: #f0e6f5;
-  color: var(--primary);
+  background: #fff3f5;
+  color: #9c3650;
   font-size: 12px;
 }
 

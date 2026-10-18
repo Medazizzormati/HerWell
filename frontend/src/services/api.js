@@ -29,9 +29,11 @@ export const api = {
   deleteProjectTask: (id) => request(`/api/tasks/${id}`, { method: 'DELETE' }),
   technicalChat: (data) => request('/api/technical-chat', { method: 'POST', body: JSON.stringify(data) }),
   // Women's Wellbeing API
+  listCycles: () => request('/api/menstrual/cycles'),
   menstrualCycles: () => request('/api/menstrual/cycles'),
   createCycle: (data) => request('/api/menstrual/cycles', { method: 'POST', body: JSON.stringify(data) }),
   deleteCycle: (id) => request(`/api/menstrual/cycles/${id}`, { method: 'DELETE' }),
+  listSymptoms: () => request('/api/menstrual/symptoms'),
   menstrualSymptoms: () => request('/api/menstrual/symptoms'),
   createSymptomLog: (data) => request('/api/menstrual/symptoms', { method: 'POST', body: JSON.stringify(data) }),
   deleteSymptomLog: (id) => request(`/api/menstrual/symptoms/${id}`, { method: 'DELETE' }),

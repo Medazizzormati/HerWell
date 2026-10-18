@@ -9,103 +9,21 @@ const API = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").repla
 function AvatarFace({ speaking, level }) {
   const mouth = useRef();
   const head = useRef();
-  const blink = useRef(0);
-  
   useFrame((state, delta) => {
-    // Gentle head movement
-    if (head.current) {
-      head.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.25) * 0.08;
-      head.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.18) * 0.03;
-    }
-    
-    // Blinking
-    blink.current += delta;
-    if (blink.current > 3 + Math.random() * 4) {
-      blink.current = 0;
-    }
-    
-    // Mouth animation for speaking
+    if (head.current) head.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.4) * 0.07;
     if (mouth.current) {
-      const target = speaking ? 0.15 + Math.min(0.95, level * 1.6) : 0.06;
-      mouth.current.scale.y += (target - mouth.current.scale.y) * Math.min(1, delta * 18);
-      mouth.current.scale.x = 0.18 + (speaking ? Math.sin(state.clock.elapsedTime * 8) * 0.02 : 0);
+      const target = speaking ? 0.08 + Math.min(0.85, level * 1.4) : 0.07;
+      mouth.current.scale.y += (target - mouth.current.scale.y) * Math.min(1, delta * 13);
     }
   });
-  
-  const blinkScale = blink.current < 0.15 ? 0.05 : 1;
-  
-  return <group ref={head} position={[0, -0.15, 0]}>
-    {/* Main head */}
-    <mesh position={[0, 0.1, 0]}>
-      <sphereGeometry args={[0.78, 52, 52]} />
-      <meshStandardMaterial color="#e8c4b8" roughness={0.55} metalness={0.05} />
-    </mesh>
-    
-    {/* Hair base */}
-    <mesh position={[0, 0.38, -0.12]} scale={[1.08, 1.1, 1.02]}>
-      <sphereGeometry args={[0.82, 52, 52]} />
-      <meshStandardMaterial color="#1a0f1f" roughness={0.75} />
-    </mesh>
-    
-    {/* Hair front */}
-    <mesh position={[0, 0.5, 0.35]} scale={[0.95, 0.5, 0.8]}>
-      <sphereGeometry args={[0.65, 40, 40]} />
-      <meshStandardMaterial color="#1a0f1f" roughness={0.75} />
-    </mesh>
-    
-    {/* Left eye */}
-    <mesh position={[-0.24, 0.16, 0.72]} scale={[1, blinkScale, 1]}>
-      <sphereGeometry args={[0.11, 28, 28]} />
-      <meshStandardMaterial color="#ffffff" roughness={0.25} metalness={0.05} />
-    </mesh>
-    <mesh position={[-0.24, 0.16, 0.8]} scale={[1, blinkScale, 1]}>
-      <sphereGeometry args={[0.055, 28, 28]} />
-      <meshStandardMaterial color="#2a1a30" roughness={0.4} />
-    </mesh>
-    
-    {/* Right eye */}
-    <mesh position={[0.24, 0.16, 0.72]} scale={[1, blinkScale, 1]}>
-      <sphereGeometry args={[0.11, 28, 28]} />
-      <meshStandardMaterial color="#ffffff" roughness={0.25} metalness={0.05} />
-    </mesh>
-    <mesh position={[0.24, 0.16, 0.8]} scale={[1, blinkScale, 1]}>
-      <sphereGeometry args={[0.055, 28, 28]} />
-      <meshStandardMaterial color="#2a1a30" roughness={0.4} />
-    </mesh>
-    
-    {/* Eyebrows */}
-    <mesh position={[-0.24, 0.32, 0.74]} rotation={[0, 0, -0.08]}>
-      <boxGeometry args={[0.14, 0.028, 0.025]} />
-      <meshStandardMaterial color="#1a0f1f" roughness={0.8} />
-    </mesh>
-    <mesh position={[0.24, 0.32, 0.74]} rotation={[0, 0, 0.08]}>
-      <boxGeometry args={[0.14, 0.028, 0.025]} />
-      <meshStandardMaterial color="#1a0f1f" roughness={0.8} />
-    </mesh>
-    
-    {/* Nose */}
-    <mesh position={[0, -0.04, 0.82]}>
-      <sphereGeometry args={[0.055, 20, 20]} />
-      <meshStandardMaterial color="#d7b0a5" roughness={0.65} />
-    </mesh>
-    
-    {/* Mouth */}
-    <mesh ref={mouth} position={[0, -0.28, 0.75]} scale={[0.24, 0.09, 0.045]}>
-      <sphereGeometry args={[1, 36, 28]} />
-      <meshStandardMaterial color="#7a3a4a" roughness={0.75} />
-    </mesh>
-    
-    {/* Neck */}
-    <mesh position={[0, -0.65, -0.06]}>
-      <capsuleGeometry args={[0.32, 0.45, 16, 28]} />
-      <meshStandardMaterial color="#d7b0a5" roughness={0.65} />
-    </mesh>
-    
-    {/* Shoulders */}
-    <mesh position={[0, -1.0, 0]}>
-      <sphereGeometry args={[0.75, 32, 24]} scale={[1.5, 0.4, 1]} />
-      <meshStandardMaterial color="#652D90" roughness={0.8} />
-    </mesh>
+  return <group ref={head} position={[0, -0.1, 0]}>
+    <mesh position={[0, -0.68, -0.05]}><capsuleGeometry args={[0.42, 0.58, 8, 16]} /><meshStandardMaterial color="#d7aa9e" /></mesh>
+    <mesh position={[0, 0.1, 0]}><sphereGeometry args={[0.8, 40, 40]} /><meshStandardMaterial color="#e7bfb1" roughness={0.8} /></mesh>
+    <mesh position={[0, 0.48, -0.03]} scale={[1.03, 0.72, 1]}><sphereGeometry args={[0.79, 40, 32]} /><meshStandardMaterial color="#3d2945" roughness={0.9} /></mesh>
+    <mesh position={[-0.29, 0.17, 0.68]}><sphereGeometry args={[0.09, 20, 20]} /><meshStandardMaterial color="#302333" /></mesh>
+    <mesh position={[0.29, 0.17, 0.68]}><sphereGeometry args={[0.09, 20, 20]} /><meshStandardMaterial color="#302333" /></mesh>
+    <mesh position={[0, -0.02, 0.77]}><sphereGeometry args={[0.065, 20, 20]} /><meshStandardMaterial color="#c99183" /></mesh>
+    <mesh ref={mouth} position={[0, -0.28, 0.735]} scale={[0.18, 0.07, 0.035]}><sphereGeometry args={[1, 24, 16]} /><meshStandardMaterial color="#582c3c" /></mesh>
   </group>;
 }
 

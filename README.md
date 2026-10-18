@@ -89,7 +89,6 @@ This project is for the HERwin Hackathon organized by IEEE Women in Engineering 
 
 ## 🙏 Acknowledgments
 
-- Maison Naël (design inspiration)
 - FastAPI (original backend)
 - Spring Boot (current backend)
 - React & Vite (frontend framework)

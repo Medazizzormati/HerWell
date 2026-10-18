@@ -7,6 +7,19 @@ from .api.routes import router
 from .api.voice_router import router as voice_router
 from .ai.rag import seed_resources
 
+app = FastAPI(title="HERwell AI API", version="0.1.0",
+              description="Non-diagnostic wellbeing and study support MVP.")
+
+# Configure CORS BEFORE including routers
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Temporary for debugging
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -17,12 +30,8 @@ async def lifespan(app: FastAPI):
         db.close()
     yield
 
-app = FastAPI(title="HERwell AI API", version="0.1.0",
-              description="Non-diagnostic wellbeing and study support MVP.",
-              lifespan=lifespan)
-origins = [item.strip() for item in settings.cors_origins.split(",") if item.strip()]
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=False,
-                   allow_methods=["*"], allow_headers=["*"])
+app.router.lifespan_context = lifespan
+
 app.include_router(router)
 app.include_router(voice_router)
 
