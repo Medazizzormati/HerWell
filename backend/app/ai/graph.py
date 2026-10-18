@@ -32,7 +32,7 @@ def build_graph(db: Session):
             )}
         return {"safety": False, "intent": classify_intent(state["message"])}
 
-    def retrieve(state: ChatState):
+    async def retrieve(state: ChatState):
         # If project_id is provided, retrieve project documents + general resources
         if state.get("project_id"):
             project_docs = retrieve_project_documents(db, state["project_id"], state["message"])
@@ -62,6 +62,10 @@ def build_graph(db: Session):
 async def run_chat(db: Session, message: str, project_id: int = None) -> dict:
     graph = build_graph(db)
     result = await graph.ainvoke({"message": message, "project_id": project_id})
+    
+    # Ensure result is a dict
+    if not isinstance(result, dict):
+        result = {"response": str(result), "intent": "general_support", "resources": [], "degraded": True, "safety": False}
     
     # Handle different resource formats (keyword vs semantic retrieval)
     sources = []

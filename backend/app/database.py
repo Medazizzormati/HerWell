@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from .config import settings
+from datetime import datetime
 
 connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
 engine = create_engine(settings.database_url, connect_args=connect_args, pool_pre_ping=True)
@@ -8,6 +9,15 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 class Base(DeclarativeBase):
     pass
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    full_name = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 def get_db():
     db = SessionLocal()

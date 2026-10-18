@@ -4,5 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import './styles.css';
 import './components/herwell-voice.css';
+import ErrorBoundary from './components/ErrorBoundary';
 
-createRoot(document.getElementById('root')).render(<React.StrictMode><BrowserRouter><App /></BrowserRouter></React.StrictMode>);
+createRoot(document.getElementById('root')).render(<React.StrictMode><ErrorBoundary><BrowserRouter><App /></BrowserRouter></ErrorBoundary></React.StrictMode>);

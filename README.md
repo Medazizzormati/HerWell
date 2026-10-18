@@ -1,94 +1,225 @@
-# HERwell AI
+# Balance AI 🌸
 
-A supportive AI companion for women students and graduates in Tunisia. Non-diagnostic wellbeing and study support with a professional, elegant design.
+> **Votre Compagnon de Bien-être Intelligent** pour étudiantes tunisiennes
 
-## 🌟 Features
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-18.2-blue.svg)](https://reactjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.13-yellow.svg)](https://www.python.org/)
 
-- **Mood Check-ins**: Track your wellbeing with private, optional check-ins
-- **AI Assistant**: 3D avatar with voice interaction and text chat
-- **Study Planner**: Deterministic scheduling to make exam prep manageable
-- **Technical PFE Assistant**: AI-powered engineering copilot for debugging and project development
-- **Women's Wellbeing**: Privacy-first menstrual health tracking with educational resources
-- **Breathing Exercises**: Guided relaxation techniques
-- **Resource Library**: Educational materials on stress, sleep, and study habits
+---
 
-## 🎨 Design
+## 📖 L'Histoire
 
-- **Primary Color**: #652D90 (Elegant Purple)
-- **Typography**: Cormorant Garamond (headings) + Jost (body)
-- **Animations**: Smooth scroll reveals and page transitions
+**Balance AI** est né d'un besoin urgent observé chez les étudiantes tunisiennes: le stress académique, la pression du PFE, l'anxiété face à l'avenir professionnel, et le manque de soutien psychologique accessible sans stigmatisation.
 
-## 🏗️ Tech Stack
+Notre mission: créer un écosystème numérique holistique qui accompagne les étudiantes tunisiennes dans leur parcours universitaire et personnel, avec empathie, confidentialité et soutien non-diagnostique.
 
-### Frontend
-- React 18 with Vite
-- Three.js for 3D avatar
-- Recharts for data visualization
-- Lucide React for icons
+## 🌟 Vision
 
-### Backend
-- Spring Boot 3.2.0
-- Spring Security
-- Spring Data JPA
-- H2 Database (in-memory)
-- Maven
+**Balance AI** offre:
 
-## 🚀 Quick Start
+- ✨ **Bien-être émotionnel** - Tracking d'humeur, respiration, ressources de soutien
+- 📚 **Organisation académique** - Gestion de tâches, calendrier, planning d'études
+- 💻 **Assistant technique PFE** - IA pour debugging, architecture, code review
+- 🌸 **Santé féminine** - Cycle tracking (privacy-first)
+- 🤝 **Soutien confidentiel** - Chat IA avec RAG, non-diagnostique
 
-### Frontend
+## 🎨 Design BalanceAI
+
+Notre design system utilise une palette chaleureuse et apaisante:
+
+- **Palette:** Violet lavender (#B77ACB), Purple (#684477), Peach (#F2D7C4), Sage (#9FB9A7)
+- **Typography:** Nunito (body) + Fraunces (headings)
+- **Background:** Blobs décoratifs avec blur
+- **Cards:** Coins arrondis avec shadow subtil
+- **Animations:** fadeUp, pulse, transitions fluides
+
+## 🏗️ Architecture Technique
+
+### Frontend (React + Vite)
+- **Framework:** React 18 + Vite
+- **Routing:** React Router SPA
+- **Icons:** Lucide React
+- **Charts:** Recharts
+- **API:** Axios avec wrapper centralisé
+- **Design:** BalanceAI CSS custom
+
+### Backend (FastAPI + Python)
+- **Framework:** FastAPI + Uvicorn
+- **Database:** SQLAlchemy + SQLite
+- **Auth:** JWT (access token)
+- **AI:** LangGraph + LangChain
+- **RAG:** sentence-transformers
+- **LLM:** Support Gemini/OpenAI/Anthropic/Mock
+
+## 🚀 Fonctionnalités
+
+### ✅ Implémentées
+- ✅ **Dashboard** - Vue d'ensemble avec statistiques
+- ✅ **Mood Tracking** - Check-in émotionnel quotidien
+- ✅ **Tasks Planner** - Gestion des tâches académiques
+- ✅ **Calendar** - Calendrier professionnel
+- ✅ **Resources** - Bibliothèque éducative RAG
+- ✅ **Breathing** - Exercices de respiration
+- ✅ **Technical PFE** - Assistant technique IA
+- ✅ **AI Voice Assistant** - Avatar avec image professionnelle
+- ✅ **Authentication** - Login/Signup avec JWT
+- ✅ **RAG** - Retrieval Augmented Generation
+
+### 🔄 En Développement
+- 🔄 **TTS Audio** - Synthèse vocale (Piper configuration required)
+- 🔄 **LLM Live** - Configuration Gemini API required
+
+## � Installation
+
+### Prérequis
+- Node.js 18+
+- Python 3.13+
+- Git
+
+### Backend Setup
+```bash
+cd backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+### Frontend Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Frontend runs on http://localhost:5173
 
-### Backend
-```bash
-cd springboot-backend
-mvn spring-boot:run
+Access:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
+- API Health: http://localhost:8000/health
+
+## 🔐 Configuration
+
+### Backend (.env)
+```env
+DATABASE_URL=sqlite:///./herwell.db
+LLM_PROVIDER=mock  # or gemini, openai, anthropic
+GEMINI_API_KEY=your_key_here
+OPENAI_API_KEY=your_key_here
+ANTHROPIC_API_KEY=your_key_here
+CORS_ORIGINS=http://localhost:5173
 ```
-Backend runs on http://localhost:8080
 
-### H2 Console
-Access H2 console at http://localhost:8080/h2-console
-- JDBC URL: `jdbc:h2:mem:herwelldb`
-- Username: `sa`
-- Password: (empty)
+### Authentication
+```bash
+# Register
+POST /api/auth/register
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "full_name": "User Name"
+}
 
-## 📱 Pages
+# Login
+POST /api/auth/login
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
 
-- **Dashboard** - Overview of your wellbeing space
-- **Mood Check-in** - Track your mood, stress, and energy
-- **AI Assistant** - 3D avatar with voice and text chat
-- **Technical PFE** - AI-powered technical assistance
-- **Women's Wellbeing** - Privacy-first menstrual health tracking
-- **Study Planner** - Manage your study tasks and time
-- **Resources** - Educational materials and tips
-- **Breathing** - Guided breathing exercises
-- **Settings** - App preferences
-- **Support** - Help and support resources
-- **Privacy** - Data handling and safety information
+## 🎯 Utilisation
 
-## 🔒 Privacy & Safety
+### Mood Tracking
+1. Navigate to `/mood`
+2. Sélectionnez votre humeur actuelle
+3. Ajoutez une note optionnelle
+4. Visualisez l'historique
 
-- **Not a medical service**: HERwell AI provides educational support only
-- **No diagnosis**: Does not diagnose conditions or replace professional care
-- **Privacy-first**: Women's Wellbeing data requires explicit consent
-- **Demo mode**: This prototype uses demo data only
-- **Local storage**: Data stored in in-memory database for demo
+### Tasks Planner
+1. Navigate to `/planner`
+2. Ajoutez des tâches avec titre, sujet, durée, priorité
+3. Marquez les tâches comme complétées
+4. Gérez votre charge de travail
 
-## 📄 License
+### AI Assistant
+1. Navigate to `/assistant`
+2. Tapez votre question ou utilisez le microphone
+3. L'IA répond avec empathie et ressources RAG
+4. Non-diagnostique, éducatif seulement
 
-This project is for the HERwin Hackathon organized by IEEE Women in Engineering at École Polytechnique de Sousse, Tunisia.
+### Technical PFE
+1. Navigate to `/technical`
+2. Sélectionnez un projet (optionnel)
+3. Posez des questions techniques
+4. Recevez des réponses avec sources
 
-## 👥 Authors
+## 📊 API Endpoints
 
-- HERwell AI Team
-- IEEE Women in Engineering - École Polytechnique de Sousse
+### Auth
+- `POST /api/auth/register` - Créer un compte
+- `POST /api/auth/login` - Se connecter
+- `GET /api/auth/me` - Profil utilisateur
 
-## 🙏 Acknowledgments
+### Chat
+- `POST /api/chat` - Chat IA avec RAG
+- `POST /api/voice/chat` - Chat vocal (TTS désactivé)
 
-- FastAPI (original backend)
-- Spring Boot (current backend)
-- React & Vite (frontend framework)
+### Tasks
+- `GET /api/tasks` - Lister les tâches
+- `POST /api/tasks` - Créer une tâche
+- `PUT /api/tasks/{id}` - Mettre à jour une tâche
+- `DELETE /api/tasks/{id}` - Supprimer une tâche
+
+### Mood
+- `GET /api/mood` - Historique d'humeur
+- `POST /api/mood` - Ajouter un check-in
+
+## 🎨 Personnalisation
+
+### Branding
+Le branding est configurable dans:
+- `frontend/src/App.jsx` - Navbar, footer, page titles
+- `frontend/src/styles.css` - Variables CSS BalanceAI
+- `backend/app/main.py` - API title
+
+### Avatar
+L'avatar image est dans `frontend/public/avatar-woman.jpg`. Remplacez-la avec votre propre image.
+
+## 📝 Développement
+
+### Ajouter une nouvelle page
+1. Créer le composant dans `frontend/src/App.jsx`
+2. Ajouter la route dans `<Routes>`
+3. Ajouter l'item de navigation dans `navItems`
+
+### Ajouter une nouvelle API
+1. Créer la fonction dans `backend/app/api/`
+2. Ajouter le router dans `backend/app/main.py`
+3. Ajouter le modèle SQLAlchemy si nécessaire
+
+## � Sécurité
+
+- ✅ Passwords hashés avec SHA-256
+- ✅ JWT tokens avec expiration (7 jours)
+- ✅ CORS configuré
+- ✅ Input validation avec Pydantic
+- ✅ Safety pre/post-check sur l'IA
+- ⚠️ Demo mode - Ne pas utiliser en production sans configuration
+
+## � License
+
+MIT License - Voir LICENSE file pour détails
+
+## 🤝 Contribution
+
+Contributions bienvenues! Ouvrez une issue ou un PR.
+
+## � Contact
+
+Pour le support ou questions, contactez l'équipe Balance AI.
+
+---
+
+**Créé avec ❤️ pour les étudiantes tunisiennes**
+
+*Balance AI - Votre Compagnon de Bien-être Intelligent*

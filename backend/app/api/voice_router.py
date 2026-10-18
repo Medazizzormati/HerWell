@@ -88,21 +88,15 @@ async def transcribe_voice(file: UploadFile = File(...)):
 @router.post("/chat")
 async def chat_with_voice(payload: ChatRequest):
     try:
-        answer = await asyncio.to_thread(
-            answer_with_existing_graph, payload.message.strip(), payload.session_id
-        )
+        answer = await answer_with_existing_graph(payload.message.strip(), payload.session_id)
     except GraphNotConfigured as exc:
         raise HTTPException(503, str(exc)) from exc
     except Exception as exc:
         raise HTTPException(502, f"HERwell graph failed: {exc}") from exc
 
-    output = VOICE_DIR / f"answer-{uuid.uuid4().hex}.wav"
-    try:
-        await asyncio.to_thread(_synthesize, answer, output)
-    except Exception as exc:
-        output.unlink(missing_ok=True)
-        raise HTTPException(503, f"Local TTS unavailable: {exc}") from exc
-    return FileResponse(
-        output, media_type="audio/wav", filename="herwell-answer.wav",
-        headers={"X-Herwell-Answer": quote(answer, safe=""), "Cache-Control": "no-store"}
-    )
+    # Return text response instead of audio for now (TTS not configured)
+    from fastapi.responses import JSONResponse
+    return JSONResponse({
+        "answer": answer,
+        "text": answer
+    }, headers={"X-Herwell-Answer": answer, "Cache-Control": "no-store"})

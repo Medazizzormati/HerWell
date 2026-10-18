@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
+import { NavLink, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { Activity, CalendarDays, Heart, MessageCircle, BookOpen, ShieldCheck, Plus, Send, CheckCircle2, Clock3, Sparkles, Trash2, Menu, Settings, Phone, Info, Code, Wind, Flower, X } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { api } from './services/api.js';
 import HerwellVoiceAssistant from './components/HerwellVoiceAssistant';
 import ProfessionalCalendar from './components/ProfessionalCalendar';
 
-const nav = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/mood', label: 'Mood check-in' },
-  { to: '/assistant', label: 'AI assistant' },
-  { to: '/technical', label: 'Technical PFE' },
-  { to: '/menstrual', label: 'Women\'s Wellbeing' },
-  { to: '/planner', label: 'Study planner' },
-  { to: '/calendar', label: 'Calendar' },
-  { to: '/resources', label: 'Resources' },
-  { to: '/breathing', label: 'Breathing' },
-  { to: '/settings', label: 'Settings' },
-  { to: '/support', label: 'Support' }
+const navItems = [
+  { path: '/', name: 'Dashboard' },
+  { path: '/mood', name: 'Mood' },
+  { path: '/assistant', name: 'AI Assistant' },
+  { path: '/technical', name: 'Technical' },
+  { path: '/planner', name: 'Tasks' },
+  { path: '/calendar', name: 'Calendar' },
+  { path: '/resources', name: 'Resources' },
+  { path: '/breathing', name: 'Breathing' },
+  { path: '/settings', name: 'Settings' },
+  { path: '/support', name: 'Support' },
+  { path: '/privacy', name: 'Privacy' }
 ];
 
+// Force re-render on route change
 function Layout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     // Trigger scroll reveal animations
@@ -36,67 +38,35 @@ function Layout({ children }) {
     document.querySelectorAll('.rv').forEach(el => observer.observe(el));
 
     return () => observer.disconnect();
-  }, []);
+  }, [location]); // Re-run on location change
 
-  return <div className="app-shell">
-    <header className="hdr">
-      <a href="/" className="logo">
-        <div className="logo-name">HERwell</div>
-        <div className="logo-tag">AI wellbeing companion</div>
-      </a>
-      <nav className={menuOpen ? 'open' : ''}>
-        {nav.map(({ to, label }) => (
+  return <div key={location.pathname}>
+    <div className="bg-decor">
+      <div className="blob b1"></div>
+      <div className="blob b2"></div>
+      <div className="blob b3"></div>
+    </div>
+    <nav className="nav">
+      <NavLink to="/" className="brand">
+        Balance <strong>AI</strong>
+      </NavLink>
+      <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
+        {navItems.map(({ path, name }) => (
           <NavLink
-            key={to}
-            to={to}
+            key={path}
+            to={path}
             className={({ isActive }) => isActive ? 'active' : ''}
             onClick={() => setMenuOpen(false)}
           >
-            {label}
+            {name}
           </NavLink>
         ))}
-      </nav>
-      <button
-        className="burger"
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle menu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </header>
-    <main className="wrap pg sec">{children}</main>
-    <footer className="ftr">
-      <div className="wrap fgrid">
-        <div>
-          <a href="/" className="logo">
-            <div className="logo-name">HERwell</div>
-            <div className="logo-tag">AI wellbeing companion</div>
-          </a>
-          <p className="fine" style={{ marginTop: '12px' }}>
-            A supportive AI companion for women students and graduates in Tunisia.
-          </p>
-        </div>
-        <nav>
-          {nav.map(({ to, label }) => (
-            <NavLink key={to} to={to}>{label}</NavLink>
-          ))}
-        </nav>
-        <div>
-          <p className="fine">
-            <ShieldCheck size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
-            <br />
-            This is educational support, not a medical service.
-          </p>
-        </div>
       </div>
-      <div className="wrap copy-line">
-        HERwell AI · A supportive companion, not a diagnosis. ·{' '}
-        <a href="/privacy">Privacy & safety</a>
+      <div className="nav-tools">
+        <button className="menu-btn" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
       </div>
-    </footer>
+    </nav>
+    <main className="view">{children}</main>
   </div>;
 }
 
@@ -117,75 +87,69 @@ function Dashboard() {
   const done = tasks.filter(t => t.completed).length;
 
   if (!loaded) {
-    return <div className="rv" style={{ textAlign: 'center', padding: '60px 0' }}>
-      <p className="lead">Loading your space...</p>
+    return <div className="view" style={{ textAlign: 'center', padding: '60px 0' }}>
+      <p>Loading your space...</p>
     </div>;
   }
 
-  return <div className="rv">
-    <h2>Your wellbeing space</h2>
-    <p className="lead">Small, kind steps can make a busy day feel more manageable.</p>
+  return <div className="view">
+    <h1>Your wellbeing space</h1>
+    <p style={{ color: 'var(--muted)' }}>Small, kind steps can make a busy day feel more manageable.</p>
 
-    <div className="grid">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
       <div className="card">
-        <div className="card-body">
-          <h3>Mood check-in</h3>
-          <p>{checkins[0]?.mood?.replace('_', ' ') || 'Not yet'}</p>
-          <p className="fine">There is no right or wrong mood.</p>
-          <a href="/mood" className="btn">Check in</a>
-        </div>
+        <h3>Mood check-in</h3>
+        <p>{checkins[0]?.mood?.replace('_', ' ') || 'Not yet'}</p>
+        <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>There is no right or wrong mood.</p>
+        <NavLink to="/mood" className="btn btn-primary">Check in</NavLink>
       </div>
 
       <div className="card">
-        <div className="card-body">
-          <h3>Study tasks</h3>
-          <p className="price">{done}/{tasks.length}</p>
-          <p className="fine">Tasks completed</p>
-          <a href="/planner" className="btn">View planner</a>
-        </div>
+        <h3>Study tasks</h3>
+        <p style={{ fontSize: '2rem', fontWeight: '700', fontFamily: 'var(--font-head)' }}>{done}/{tasks.length}</p>
+        <p style={{ color: 'var(--muted)' }}>Tasks completed</p>
+        <NavLink to="/planner" className="btn btn-ghost">View planner</NavLink>
       </div>
 
       <div className="card">
-        <div className="card-body">
-          <h3>Gentle reminder</h3>
-          <p>Take a pause</p>
-          <p className="fine">Rest is part of progress.</p>
-          <a href="/resources" className="btn">Explore tips</a>
-        </div>
+        <h3>Gentle reminder</h3>
+        <p>Take a pause</p>
+        <p style={{ color: 'var(--muted)' }}>Rest is part of progress.</p>
+        <NavLink to="/resources" className="btn btn-soft">Explore tips</NavLink>
       </div>
     </div>
 
-    <div className="split" style={{ marginTop: '64px' }}>
-      <div className="panel">
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '2rem' }}>
+      <div className="card">
         <h3>Your week, gently</h3>
-        <p className="fine">Check-ins are shown when you add them.</p>
+        <p style={{ color: 'var(--muted)' }}>Check-ins are shown when you add them.</p>
         {checkins.length ? (
-          <div style={{ marginTop: '24px' }}>
+          <div style={{ marginTop: '1.5rem' }}>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={checkins.slice(0, 7).map((x, i) => ({ day: `#${i + 1}`, stress: x.stress, energy: x.energy }))}>
                 <XAxis dataKey="day" />
                 <YAxis domain={[0, 5]} />
                 <Tooltip />
-                <Bar dataKey="stress" fill="#652D90" radius={[5, 5, 0, 0]} />
-                <Bar dataKey="energy" fill="#8B4DB8" radius={[5, 5, 0, 0]} />
+                <Bar dataKey="stress" fill="var(--purple)" radius={[5, 5, 0, 0]} />
+                <Bar dataKey="energy" fill="var(--lavender)" radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="fine" style={{ marginTop: '24px' }}>Your check-in history will appear here</p>
+          <p style={{ color: 'var(--muted)', marginTop: '1.5rem' }}>Your check-in history will appear here</p>
         )}
       </div>
 
-      <div className="panel">
+      <div className="card">
         <h3>Next small steps</h3>
-        <p className="fine">Keep it realistic.</p>
-        <ul className="chips" style={{ listStyle: 'none', padding: 0 }}>
+        <p style={{ color: 'var(--muted)' }}>Keep it realistic.</p>
+        <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem' }}>
           {tasks.filter(t => !t.completed).slice(0, 4).map(t => (
-            <li key={t.id}>{t.title}</li>
+            <li key={t.id} style={{ padding: '0.5rem', background: 'var(--cream)', borderRadius: '12px', marginBottom: '0.5rem' }}>{t.title}</li>
           ))}
         </ul>
-        {!tasks.some(t => !t.completed) && <p className="fine">No tasks yet. Add one when you are ready.</p>}
-        <a href="/planner" className="btn solid" style={{ marginTop: '24px' }}>Plan my time</a>
+        {!tasks.some(t => !t.completed) && <p style={{ color: 'var(--muted)' }}>No tasks yet. Add one when you are ready.</p>}
+        <NavLink to="/planner" className="btn btn-primary" style={{ marginTop: '1.5rem' }}>Plan my time</NavLink>
       </div>
     </div>
   </div>;
@@ -217,36 +181,38 @@ function MoodPage() {
     }
   }
 
-  return <div className="rv">
-    <h2>How are you feeling today?</h2>
-    <p className="lead">There is no score to achieve. Share only what feels comfortable.</p>
+  return <div className="view">
+    <h1>How are you feeling today?</h1>
+    <p style={{ color: 'var(--muted)' }}>There is no score to achieve. Share only what feels comfortable.</p>
 
-    <div className="panel" style={{ maxWidth: '560px' }}>
+    <div className="card" style={{ maxWidth: '560px', margin: '2rem auto' }}>
       <form onSubmit={save}>
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>Your mood</label>
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>Your mood</label>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.5rem', marginBottom: '1.5rem' }}>
           {moods.map(([id, label, emoji]) => (
             <button
               type="button"
               key={id}
               onClick={() => setMood(id)}
               style={{
-                flex: 1,
-                padding: '16px',
-                border: mood === id ? '2px solid var(--primary)' : '1px solid var(--line)',
-                borderRadius: '12px',
-                background: mood === id ? 'var(--ivory2)' : '#fff',
+                padding: '1rem 0.5rem',
+                border: mood === id ? '2px solid var(--purple)' : '2px solid var(--line)',
+                borderRadius: '16px',
+                background: mood === id ? 'var(--cream)' : '#fff',
                 cursor: 'pointer',
-                fontSize: '13px'
+                fontSize: '0.85rem',
+                fontWeight: '700',
+                color: 'var(--text)',
+                transition: 'all 0.2s'
               }}
             >
-              <div style={{ fontSize: '24px', marginBottom: '4px' }}>{emoji}</div>
+              <div style={{ fontSize: '1.8rem', marginBottom: '0.25rem' }}>{emoji}</div>
               <small>{label}</small>
             </button>
           ))}
         </div>
 
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
           Stress level <b>{stress}/5</b>
         </label>
         <input
@@ -255,14 +221,14 @@ function MoodPage() {
           max="5"
           value={stress}
           onChange={e => setStress(e.target.value)}
-          style={{ width: '100%', marginBottom: '8px' }}
+          style={{ width: '100%', marginBottom: '0.5rem', accentColor: 'var(--purple)' }}
         />
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--mute)', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>
           <span>Calm</span>
           <span>Overwhelmed</span>
         </div>
 
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
           Energy level <b>{energy}/5</b>
         </label>
         <input
@@ -271,30 +237,30 @@ function MoodPage() {
           max="5"
           value={energy}
           onChange={e => setEnergy(e.target.value)}
-          style={{ width: '100%', marginBottom: '8px' }}
+          style={{ width: '100%', marginBottom: '0.5rem', accentColor: 'var(--purple)' }}
         />
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--mute)', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>
           <span>Low</span>
           <span>High</span>
         </div>
 
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>Optional note</label>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>Optional note</label>
         <textarea
           value={note}
           maxLength="1000"
           onChange={e => setNote(e.target.value)}
           placeholder="Anything you want to remember about today? (optional)"
-          style={{ width: '100%', minHeight: '80px', marginBottom: '16px' }}
+          style={{ width: '100%', minHeight: '80px', marginBottom: '1rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', fontFamily: 'inherit' }}
         />
 
-        <p className="fine" style={{ marginBottom: '16px' }}>
+        <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginBottom: '1rem' }}>
           <ShieldCheck size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
           {' '}Use demo data only. This prototype has no user authentication.
         </p>
 
-        <button type="submit" className="btn solid">Save check-in</button>
+        <button type="submit" className="btn btn-primary">Save check-in</button>
 
-        {message && <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--gold-d)' }}>{message}</p>}
+        {message && <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: 'var(--muted)' }}>{message}</p>}
       </form>
     </div>
   </div>;
@@ -353,39 +319,39 @@ function PlannerPage() {
     }
   }
 
-  return <div className="rv">
-    <h2>Make space for what matters</h2>
-    <p className="lead">Add tasks, choose your available time, and generate a simple deterministic plan.</p>
+  return <div className="view">
+    <h1>Make space for what matters</h1>
+    <p style={{ color: 'var(--muted)' }}>Add tasks, choose your available time, and generate a simple deterministic plan.</p>
 
-    <div className="split">
-      <div className="panel">
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+      <div className="card">
         <h3>Add a study task</h3>
         <form onSubmit={add}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
             Task title
             <input
               required
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder="e.g. Review database joins"
-              style={{ marginTop: '4px' }}
+              style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }}
             />
           </label>
 
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
             Subject (optional)
             <input
               value={subject}
               onChange={e => setSubject(e.target.value)}
               placeholder="e.g. SQL"
-              style={{ marginTop: '4px' }}
+              style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }}
             />
           </label>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-            <label style={{ fontSize: '14px', color: 'var(--mute)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+            <label style={{ fontWeight: '700', color: 'var(--muted)' }}>
               Duration
-              <select value={duration} onChange={e => setDuration(e.target.value)} style={{ marginTop: '4px' }}>
+              <select value={duration} onChange={e => setDuration(e.target.value)} style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }}>
                 <option value="25">25 min</option>
                 <option value="45">45 min</option>
                 <option value="60">60 min</option>
@@ -393,9 +359,9 @@ function PlannerPage() {
               </select>
             </label>
 
-            <label style={{ fontSize: '14px', color: 'var(--mute)' }}>
+            <label style={{ fontWeight: '700', color: 'var(--muted)' }}>
               Priority
-              <select value={priority} onChange={e => setPriority(e.target.value)} style={{ marginTop: '4px' }}>
+              <select value={priority} onChange={e => setPriority(e.target.value)} style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }}>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -403,29 +369,31 @@ function PlannerPage() {
             </label>
           </div>
 
-          <button type="submit" className="btn solid">
+          <button type="submit" className="btn btn-primary">
             <Plus size={17} /> Add task
           </button>
         </form>
       </div>
 
-      <div className="panel">
+      <div className="card">
         <h3>Your tasks</h3>
-        <p className="fine">{tasks.filter(t => !t.completed).length} remaining</p>
+        <p style={{ color: 'var(--muted)' }}>{tasks.filter(t => !t.completed).length} remaining</p>
 
-        <div style={{ marginTop: '24px' }}>
+        <div style={{ marginTop: '1.5rem' }}>
           {tasks.map(t => (
             <div
               key={t.id}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
-                padding: '12px',
-                marginBottom: '8px',
-                background: t.completed ? 'var(--ivory2)' : '#fff',
-                borderRadius: '12px',
-                opacity: t.completed ? 0.6 : 1
+                gap: '0.75rem',
+                padding: '0.75rem',
+                marginBottom: '0.5rem',
+                background: t.completed ? 'var(--cream)' : '#fff',
+                borderRadius: '16px',
+                opacity: t.completed ? 0.6 : 1,
+                border: '1px solid var(--line)',
+                border: '1px solid var(--line)'
               }}
             >
               <button
@@ -435,8 +403,8 @@ function PlannerPage() {
                   height: '24px',
                   border: '1px solid var(--line)',
                   borderRadius: '6px',
-                  background: t.completed ? 'var(--gold-d)' : '#fff',
-                  color: t.completed ? '#fff' : 'var(--ink)',
+                  background: t.completed ? 'var(--sage)' : '#fff',
+                  color: t.completed ? '#fff' : 'var(--text)',
                   cursor: 'pointer'
                 }}
               >
@@ -444,13 +412,13 @@ function PlannerPage() {
               </button>
               <div style={{ flex: 1 }}>
                 <b>{t.title}</b>
-                <small style={{ display: 'block', color: 'var(--mute)' }}>
+                <small style={{ display: 'block', color: 'var(--muted)' }}>
                   {t.subject || 'Study'} · {t.duration_minutes} min · {t.priority} priority
                 </small>
               </div>
               <button
                 onClick={() => remove(t)}
-                style={{ padding: '4px', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--mute)' }}
+                style={{ padding: '4px', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted)' }}
               >
                 <Trash2 size={16} />
               </button>
@@ -458,7 +426,7 @@ function PlannerPage() {
           ))}
         </div>
 
-        {!tasks.length && <p className="fine">Your task list is empty. Add one task to begin.</p>}
+        {!tasks.length && <p style={{ color: 'var(--muted)' }}>Your task list is empty. Add one task to begin.</p>}
       </div>
     </div>
   </div>;
@@ -476,29 +444,29 @@ function ResourcesPage() {
     `${x.title} ${x.content} ${x.category}`.toLowerCase().includes(query.toLowerCase())
   );
 
-  return <div className="rv">
-    <h2>A library for your everyday wellbeing</h2>
-    <p className="lead">These original educational notes are not medical advice. Check sources before using external health claims.</p>
+  return <div className="view">
+    <h1>A library for your everyday wellbeing</h1>
+    <p style={{ color: 'var(--muted)' }}>These original educational notes are not medical advice. Check sources before using external health claims.</p>
 
-    <div style={{ marginBottom: '38px' }}>
+    <div style={{ marginBottom: '1.5rem' }}>
       <input
         value={query}
         onChange={e => setQuery(e.target.value)}
         placeholder="Search study, sleep, stress…"
-        style={{ width: '100%', maxWidth: '400px', padding: '14px' }}
+        style={{ width: '100%', maxWidth: '400px', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)' }}
       />
     </div>
 
-    <div className="grid">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
       {filtered.map((r, i) => (
         <article className="card" key={i}>
           <div className="card-body">
-            <small style={{ color: 'var(--gold-d)', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em' }}>
+            <small style={{ color: 'var(--purple-dark)', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em' }}>
               {r.category.replace('_', ' ')}
             </small>
             <h3>{r.title}</h3>
             <p>{r.content}</p>
-            <p className="fine">
+            <p style={{ color: 'var(--muted)' }}>
               <ShieldCheck size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
               {' '}{r.source}
             </p>
@@ -507,7 +475,7 @@ function ResourcesPage() {
       ))}
     </div>
 
-    {!filtered.length && <p className="fine">No resources match your search.</p>}
+    {!filtered.length && <p style={{ color: 'var(--muted)' }}>No resources match your search.</p>}
   </div>;
 }
 
@@ -541,17 +509,17 @@ function BreathingPage() {
     setSeconds(0);
   };
 
-  return <div className="rv" style={{ textAlign: 'center' }}>
-    <h2>Box breathing exercise</h2>
-    <p className="lead">A simple technique to calm your mind and reduce stress.</p>
+  return <div className="view" style={{ textAlign: 'center' }}>
+    <h1>Box breathing exercise</h1>
+    <p style={{ color: 'var(--muted)' }}>A simple technique to calm your mind and reduce stress.</p>
 
     <div
       style={{
         width: '200px',
         height: '200px',
         borderRadius: '50%',
-        background: 'var(--blush)',
-        margin: '40px auto',
+        background: 'var(--peach)',
+        margin: '2rem auto',
         display: 'grid',
         placeItems: 'center',
         position: 'relative',
@@ -563,18 +531,18 @@ function BreathingPage() {
           position: 'absolute',
           inset: 0,
           borderRadius: '50%',
-          background: 'var(--primary)',
+          background: 'var(--purple)',
           opacity: 0.3,
           transform: phase === 'inhale' ? 'scale(1)' : phase === 'exhale' ? 'scale(0.5)' : 'scale(0.75)',
           transition: 'transform 4s ease-in-out'
         }}
       />
-      <div style={{ zIndex: 1, fontFamily: 'var(--serif)', fontSize: '18px', color: 'var(--ink)' }}>
+      <div style={{ zIndex: 1, fontFamily: 'var(--font-head)', fontSize: '18px', color: 'var(--text)' }}>
         {phase === 'idle' ? 'Start' : phase === 'inhale' ? 'Inhale' : phase === 'hold' ? 'Hold' : 'Exhale'}
       </div>
     </div>
 
-    <p style={{ fontSize: '14px', color: 'var(--mute)', maxWidth: '400px', margin: '0 auto' }}>
+    <p style={{ fontSize: '14px', color: 'var(--muted)', maxWidth: '400px', margin: '0 auto' }}>
       {phase === 'idle'
         ? 'Press start to begin a 4-4-4-4 breathing cycle'
         : phase === 'inhale'
@@ -587,8 +555,8 @@ function BreathingPage() {
     <button
       onClick={start}
       disabled={phase !== 'idle'}
-      className="btn solid"
-      style={{ marginTop: '24px' }}
+      className="btn btn-primary"
+      style={{ marginTop: '1.5rem' }}
     >
       {phase === 'idle' ? 'Start breathing' : 'In progress...'}
     </button>
@@ -596,27 +564,27 @@ function BreathingPage() {
 }
 
 function SettingsPage() {
-  return <div className="rv">
-    <h2>Settings</h2>
-    <p className="lead">This demo does not have real authentication or per-user settings.</p>
+  return <div className="view">
+    <h1>Settings</h1>
+    <p style={{ color: 'var(--muted)' }}>This demo does not have real authentication or per-user settings.</p>
 
-    <div className="panel" style={{ maxWidth: '560px' }}>
+    <div className="card" style={{ maxWidth: '560px' }}>
       <h3>Prototype settings</h3>
-      <p className="fine">The following features are placeholders for future development.</p>
+      <p style={{ color: 'var(--muted)' }}>The following features are placeholders for future development.</p>
 
-      <div style={{ marginTop: '24px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+      <div style={{ marginTop: '1.5rem' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
           Language
-          <select disabled style={{ marginTop: '4px', width: '100%' }}>
+          <select disabled style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }}>
             <option>Français</option>
             <option>English</option>
             <option>العربية</option>
           </select>
         </label>
 
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
           Theme
-          <select disabled style={{ marginTop: '4px', width: '100%' }}>
+          <select disabled style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }}>
             <option>Light</option>
             <option>Dark (not implemented)</option>
           </select>
@@ -627,19 +595,19 @@ function SettingsPage() {
 }
 
 function SupportPage() {
-  return <div className="rv">
-    <h2>Support resources</h2>
-    <p className="lead">If you are in immediate danger, contact local emergency services right away.</p>
+  return <div className="view">
+    <h1>Support resources</h1>
+    <p style={{ color: 'var(--muted)' }}>If you are in immediate danger, contact local emergency services right away.</p>
 
-    <div className="panel">
+    <div className="card">
       <h3>Verified local contacts</h3>
-      <p className="warning" style={{ color: 'var(--gold-d)' }}>
+      <p style={{ color: 'var(--purple-dark)', background: 'var(--peach)', padding: '0.75rem', borderRadius: '12px' }}>
         <Phone size={16} style={{ display: 'inline', verticalAlign: 'middle' }} />
         {' '}No verified contacts are configured in this demo. For production, add only verified local emergency and support contacts before deployment.
       </p>
     </div>
 
-    <div className="panel" style={{ marginTop: '26px' }}>
+    <div className="card" style={{ marginTop: '1.5rem' }}>
       <h3>When to seek help</h3>
       <p>If you are feeling overwhelmed, consider reaching out to a trusted friend, family member, or campus counseling service.</p>
     </div>
@@ -647,31 +615,146 @@ function SupportPage() {
 }
 
 function LoginPage() {
-  return <div className="rv" style={{ maxWidth: '560px', margin: '0 auto' }}>
-    <h2>Sign in to HERwell</h2>
-    <p className="lead">Authentication is not implemented in this hackathon prototype.</p>
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    <div className="panel">
-      <p className="fine">
-        <Info size={16} style={{ display: 'inline', verticalAlign: 'middle' }} />
-        {' '}This is a placeholder for future development.
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+      const body = isLogin 
+        ? { email, password }
+        : { email, password, full_name: fullName };
+
+      const res = await fetch(`http://localhost:8000${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || 'Authentication failed');
+      }
+
+      // Store token
+      localStorage.setItem('balance_ai_token', data.access_token);
+      localStorage.setItem('balance_ai_user', JSON.stringify(data.user));
+
+      // Navigate to dashboard
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return <div className="view" style={{ maxWidth: '480px', margin: '0 auto' }}>
+    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <h1>{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
+      <p style={{ color: 'var(--muted)' }}>
+        {isLogin ? 'Sign in to access your Balance AI dashboard' : 'Join Balance AI to track your wellbeing'}
       </p>
+    </div>
 
-      <form style={{ marginTop: '24px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+    <div className="card">
+      {error && (
+        <div style={{ 
+          padding: '0.75rem', 
+          borderRadius: '12px', 
+          background: '#FFF6F9', 
+          color: '#8E3A6A', 
+          fontSize: '13px', 
+          fontWeight: '700',
+          marginBottom: '1rem'
+        }}>
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        {!isLogin && (
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
+            Full Name
+            <input 
+              type="text" 
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              placeholder="Your name" 
+              required
+              style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }} 
+            />
+          </label>
+        )}
+
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', color: 'var(--muted)' }}>
           Email
-          <input type="email" placeholder="your.email@example.com" disabled style={{ marginTop: '4px', width: '100%' }} />
+          <input 
+            type="email" 
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="your.email@example.com" 
+            required
+            style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }} 
+          />
         </label>
 
-        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--mute)' }}>
+        <label style={{ display: 'block', marginBottom: '1rem', fontWeight: '700', color: 'var(--muted)' }}>
           Password
-          <input type="password" placeholder="••••••••" disabled style={{ marginTop: '4px', width: '100%' }} />
+          <input 
+            type="password" 
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="••••••••" 
+            required
+            minLength={6}
+            style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }} 
+          />
         </label>
 
-        <button type="submit" className="btn solid" disabled>Sign in</button>
+        <button 
+          type="submit" 
+          className="btn btn-primary" 
+          disabled={loading}
+          style={{ width: '100%' }}
+        >
+          {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+        </button>
       </form>
 
-      <p className="fine" style={{ marginTop: '16px' }}>Demo mode active — no account required to explore the interface.</p>
+      <div style={{ marginTop: '1.5rem', textAlign: 'center', color: 'var(--muted)', fontSize: '14px' }}>
+        {isLogin ? "Don't have an account? " : "Already have an account? "}
+        <button 
+          type="button"
+          onClick={() => { setIsLogin(!isLogin); setError(''); }}
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: 'var(--purple-dark)', 
+            fontWeight: '700', 
+            cursor: 'pointer',
+            textDecoration: 'underline'
+          }}
+        >
+          {isLogin ? 'Sign up' : 'Sign in'}
+        </button>
+      </div>
+    </div>
+
+    <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+      <NavLink to="/" style={{ color: 'var(--muted)', fontSize: '14px' }}>
+        ← Back to Dashboard
+      </NavLink>
     </div>
   </div>;
 }
@@ -706,17 +789,17 @@ function TechnicalPage() {
     }
   }
 
-  return <div className="rv">
-    <h2>Technical PFE Assistant</h2>
-    <p className="lead">Your AI-powered engineering copilot for debugging, architecture, and project development.</p>
+  return <div className="view">
+    <h1>Technical PFE Assistant</h1>
+    <p style={{ color: 'var(--muted)' }}>Your AI-powered engineering copilot for debugging, architecture, and project development.</p>
 
-    <div className="panel">
-      <div style={{ marginBottom: '16px' }}>
-        <label style={{ fontSize: '14px', color: 'var(--mute)' }}>Select project</label>
+    <div className="card" style={{ marginTop: '1.5rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={{ fontWeight: '700', color: 'var(--muted)' }}>Select project</label>
         <select
           value={selectedProject || ''}
           onChange={e => setSelectedProject(Number(e.target.value) || null)}
-          style={{ marginTop: '4px', width: '100%' }}
+          style={{ marginTop: '0.25rem', padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)', width: '100%' }}
         >
           <option value="">No project selected</option>
           {projects.map(p => (
@@ -725,40 +808,41 @@ function TechnicalPage() {
         </select>
       </div>
 
-      <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '16px' }}>
+      <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '1rem' }}>
         {messages.map((m, i) => (
           <div
             key={i}
             style={{
-              padding: '12px',
-              marginBottom: '8px',
-              borderRadius: '12px',
-              background: m.role === 'user' ? 'var(--ivory2)' : '#fff',
+              padding: '0.75rem',
+              marginBottom: '0.5rem',
+              borderRadius: '16px',
+              background: m.role === 'user' ? 'var(--cream)' : '#fff',
               marginLeft: m.role === 'user' ? 'auto' : '0',
               marginRight: m.role === 'user' ? '0' : 'auto',
-              maxWidth: '80%'
+              maxWidth: '80%',
+              border: '1px solid var(--line)'
             }}
           >
-            <small style={{ color: 'var(--mute)', fontSize: '12px' }}>{m.role === 'user' ? 'You' : 'HERwell'}</small>
-            <p style={{ marginTop: '4px' }}>{m.text}</p>
+            <small style={{ color: 'var(--muted)', fontSize: '12px' }}>{m.role === 'user' ? 'You' : 'Balance AI'}</small>
+            <p style={{ marginTop: '0.25rem' }}>{m.text}</p>
             {m.sources?.length > 0 && (
-              <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--mute)' }}>
+              <div style={{ marginTop: '0.5rem', fontSize: '12px', color: 'var(--muted)' }}>
                 Sources: {m.sources.map((s, j) => s.title).join(', ')}
               </div>
             )}
           </div>
         ))}
-        {busy && <p className="fine">Thinking carefully…</p>}
+        {busy && <p style={{ color: 'var(--muted)' }}>Thinking carefully…</p>}
       </div>
 
-      <form onSubmit={send} style={{ display: 'flex', gap: '8px' }}>
+      <form onSubmit={send} style={{ display: 'flex', gap: '0.5rem' }}>
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Ask a technical question…"
-          style={{ flex: 1 }}
+          style={{ flex: 1, padding: '0.7rem 0.9rem', border: '2px solid var(--line)', borderRadius: 'var(--radius-sm)', background: 'var(--cream)' }}
         />
-        <button type="submit" className="btn solid" disabled={busy || !input.trim()}>
+        <button type="submit" className="btn btn-primary" disabled={busy || !input.trim()}>
           <Send size={18} />
         </button>
       </form>
@@ -766,116 +850,22 @@ function TechnicalPage() {
   </div>;
 }
 
-function MenstrualPage() {
-  const [trackingEnabled, setTrackingEnabled] = useState(false);
-  const [cycles, setCycles] = useState([]);
-  const [symptoms, setSymptoms] = useState([]);
-  const [estimate, setEstimate] = useState(null);
-
-  useEffect(() => {
-    api.listCycles().then(setCycles).catch(() => setCycles([]));
-    api.listSymptoms().then(setSymptoms).catch(() => setSymptoms([]));
-    api.estimateNextPeriod().then(setEstimate).catch(() => setEstimate(null));
-  }, []);
-
-  async function enableTracking() {
-    setTrackingEnabled(true);
-  }
-
-  async function addCycle() {
-    try {
-      await api.createCycle({
-        period_start_date: new Date().toISOString(),
-        cycle_length_days: 28,
-        notes: '',
-        tracking_enabled: true
-      });
-      api.listCycles().then(setCycles);
-    } catch {
-      console.error('Could not add cycle');
-    }
-  }
-
-  async function deleteAll() {
-    if (confirm('Delete all menstrual health data? This cannot be undone.')) {
-      try {
-        await api.deleteAllMenstrualData();
-        setCycles([]);
-        setSymptoms([]);
-        setEstimate(null);
-      } catch {
-        console.error('Could not delete data');
-      }
-    }
-  }
-
-  return <div className="rv">
-    <h2>Women's Wellbeing</h2>
-    <p className="lead">Optional, privacy-first menstrual health tracking and educational resources.</p>
-
-    {!trackingEnabled ? (
-      <div className="panel" style={{ background: 'var(--blush)', maxWidth: '560px' }}>
-        <h3>Enable tracking</h3>
-        <p className="fine">
-          Cycle tracking is optional. If you enable it, your data will be stored locally. You can delete it at any time.
-        </p>
-        <button onClick={enableTracking} className="btn solid">Enable tracking</button>
-      </div>
-    ) : (
-      <>
-        <div className="grid">
-          <div className="card">
-            <div className="card-body">
-              <h3>Next period estimate</h3>
-              {estimate ? (
-                <>
-                  <p className="price">{new Date(estimate.estimate).toLocaleDateString()}</p>
-                  <p className="fine">{estimate.disclaimer}</p>
-                </>
-              ) : (
-                <p className="fine">Insufficient data to estimate</p>
-              )}
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-body">
-              <h3>Cycles recorded</h3>
-              <p className="price">{cycles.length}</p>
-              <p className="fine">Add more cycles for better estimates</p>
-              <button onClick={addCycle} className="btn" style={{ marginTop: '8px' }}>Add cycle</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="panel" style={{ marginTop: '26px', background: 'var(--blush)' }}>
-          <h3>Privacy controls</h3>
-          <p className="fine">Your menstrual health data is stored separately from other features.</p>
-          <button onClick={deleteAll} className="btn" style={{ borderColor: '#e07a7a', color: '#e07a7a' }}>
-            Delete all menstrual data
-          </button>
-        </div>
-      </>
-    )}
-  </div>;
-}
-
 function PrivacyPage() {
-  return <div className="rv" style={{ maxWidth: '720px' }}>
-    <h2>Privacy & Safety</h2>
-    <p className="lead">Understanding how HERwell AI handles your data and protects your wellbeing.</p>
+  return <div className="view" style={{ maxWidth: '720px' }}>
+    <h1>Privacy & Safety</h1>
+    <p style={{ color: 'var(--muted)' }}>Understanding how Balance AI handles your data and protects your wellbeing.</p>
 
-    <div className="panel">
+    <div className="card" style={{ marginTop: '1.5rem' }}>
       <h3>Data collection</h3>
       <p>This hackathon prototype uses demo data only and has no authentication. Do not enter sensitive personal information.</p>
     </div>
 
-    <div className="panel" style={{ marginTop: '26px' }}>
+    <div className="card" style={{ marginTop: '1.5rem' }}>
       <h3>Not a medical service</h3>
-      <p>HERwell AI is educational support only. It does not diagnose conditions, prescribe treatments, or replace professional care. If you may be in immediate danger, contact verified local emergency support.</p>
+      <p>Balance AI is educational support only. It does not diagnose conditions, prescribe treatments, or replace professional care. If you may be in immediate danger, contact verified local emergency support.</p>
     </div>
 
-    <div className="panel" style={{ marginTop: '26px' }}>
+    <div className="card" style={{ marginTop: '1.5rem' }}>
       <h3>Data deletion</h3>
       <p>In this demo, data is stored locally. Clear your browser data to remove all information.</p>
     </div>
@@ -883,10 +873,10 @@ function PrivacyPage() {
 }
 
 function NotFound() {
-  return <div className="rv" style={{ textAlign: 'center' }}>
-    <h2>Page not found</h2>
-    <p className="lead">The page you're looking for doesn't exist.</p>
-    <a href="/" className="btn solid">Go home</a>
+  return <div className="view" style={{ textAlign: 'center', padding: '4rem 0' }}>
+    <h1>Page not found</h1>
+    <p style={{ color: 'var(--muted)' }}>The page you're looking for doesn't exist.</p>
+    <NavLink to="/" className="btn btn-primary" style={{ marginTop: '1.5rem' }}>Go to Dashboard</NavLink>
   </div>;
 }
 
@@ -896,15 +886,14 @@ export default function App() {
     <Route path="/mood" element={<Layout><MoodPage /></Layout>} />
     <Route path="/assistant" element={<Layout><AssistantPage /></Layout>} />
     <Route path="/technical" element={<Layout><TechnicalPage /></Layout>} />
-    <Route path="/menstrual" element={<Layout><MenstrualPage /></Layout>} />
     <Route path="/planner" element={<Layout><PlannerPage /></Layout>} />
     <Route path="/calendar" element={<Layout><ProfessionalCalendar /></Layout>} />
     <Route path="/resources" element={<Layout><ResourcesPage /></Layout>} />
     <Route path="/breathing" element={<Layout><BreathingPage /></Layout>} />
     <Route path="/settings" element={<Layout><SettingsPage /></Layout>} />
     <Route path="/support" element={<Layout><SupportPage /></Layout>} />
-    <Route path="/login" element={<Layout><LoginPage /></Layout>} />
     <Route path="/privacy" element={<Layout><PrivacyPage /></Layout>} />
+    <Route path="/login" element={<Layout><LoginPage /></Layout>} />
     <Route path="*" element={<Layout><NotFound /></Layout>} />
   </Routes>;
 }

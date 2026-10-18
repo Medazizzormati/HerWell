@@ -3,6 +3,17 @@ from ..config import settings
 async def generate_response(message: str, resources: list[dict], intent: str) -> tuple[str, bool]:
     provider = settings.llm_provider.lower()
     
+    # Get API key based on provider
+    api_key = None
+    if provider == "openai":
+        api_key = settings.openai_api_key
+    elif provider == "gemini":
+        api_key = settings.gemini_api_key
+    elif provider == "anthropic":
+        api_key = settings.anthropic_api_key
+    else:
+        api_key = settings.llm_api_key
+    
     # Handle different resource formats (keyword vs semantic retrieval)
     context_parts = []
     for r in resources:
@@ -16,7 +27,7 @@ async def generate_response(message: str, resources: list[dict], intent: str) ->
     
     context = "\n".join(context_parts)
     
-    if provider == "mock" or not settings.llm_api_key:
+    if provider == "mock" or not api_key:
         reply = (
             "Mode démo sans modèle IA connecté. "
             "Je peux proposer des pistes générales, sans diagnostic. "
@@ -38,13 +49,27 @@ async def generate_response(message: str, resources: list[dict], intent: str) ->
     )
     try:
         if provider == "gemini":
-            from google import genai
-            client = genai.Client(api_key=settings.llm_api_key)
-            result = client.models.generate_content(model=settings.llm_model or "gemini-2.0-flash", contents=prompt)
-            return (result.text or "Je n'ai pas pu formuler une réponse."), False
+            import google.generativeai as genai
+            genai.configure(api_key=api_key)
+            try:
+                # Use the older API that still works
+                models_to_try = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro", "gemini-flash"]
+                for model_name in models_to_try:
+                    try:
+                        model = genai.GenerativeModel(model_name)
+                        result = model.generate_content(prompt)
+                        if result and result.text:
+                            return (result.text or "Je n'ai pas pu formuler une réponse."), False
+                    except Exception as e:
+                        print(f"Gemini model {model_name} failed: {e}")
+                        continue
+                return "Gemini models unavailable. Try using OpenAI provider.", True
+            except Exception as e:
+                print(f"Gemini error: {e}")
+                raise
         if provider == "openai":
             from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key=settings.llm_api_key)
+            client = AsyncOpenAI(api_key=api_key)
             result = await client.chat.completions.create(
                 model=settings.llm_model or "gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
@@ -52,7 +77,7 @@ async def generate_response(message: str, resources: list[dict], intent: str) ->
             return result.choices[0].message.content or "", False
         if provider == "anthropic":
             from anthropic import AsyncAnthropic
-            client = AsyncAnthropic(api_key=settings.llm_api_key)
+            client = AsyncAnthropic(api_key=api_key)
             result = await client.messages.create(
                 model=settings.llm_model or "claude-3-5-haiku-latest",
                 max_tokens=700,
@@ -60,6 +85,7 @@ async def generate_response(message: str, resources: list[dict], intent: str) ->
             )
             return "".join(block.text for block in result.content if getattr(block, "type", "") == "text"), False
         return "Fournisseur LLM non reconnu. Vérifiez LLM_PROVIDER.", True
-    except Exception:
+    except Exception as e:
+        print(f"LLM Error: {e}")
         return ("Le modèle IA est momentanément indisponible. Consultez les ressources disponibles "
                 "et réessayez plus tard."), True

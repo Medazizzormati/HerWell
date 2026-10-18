@@ -5,6 +5,7 @@ from .config import settings
 from .database import Base, engine, SessionLocal
 from .api.routes import router
 from .api.voice_router import router as voice_router
+from .api.auth_router import router as auth_router
 from .ai.rag import seed_resources
 
 app = FastAPI(title="HERwell AI API", version="0.1.0",
@@ -34,6 +35,7 @@ app.router.lifespan_context = lifespan
 
 app.include_router(router)
 app.include_router(voice_router)
+app.include_router(auth_router)
 
 @app.get("/health")
 def health():
