@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: herwell-backend
+    runtime: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/herwell-backend-1.0.0.jar
+    env: java
+    plan: free
+    branch: main
+    healthCheckPath: /api/health
+    
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: AI_SERVICE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://herwell-frontend.onrender.com
+      - key: PORT
+        value: 8080
+
+databases:
+  - name: herwell-db
+    databaseName: herwell
+    user: herwell
+    plan: free
