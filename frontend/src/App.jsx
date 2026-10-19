@@ -5,6 +5,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recha
 import { api } from './services/api.js';
 import HerwellVoiceAssistant from './components/HerwellVoiceAssistant';
 import ProfessionalCalendar from './components/ProfessionalCalendar';
+import LoginPage from './components/LoginPage';
 
 const navItems = [
   { path: '/', name: 'Dashboard' },
@@ -880,8 +881,30 @@ function NotFound() {
   </div>;
 }
 
-export default function App() {
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '4rem' }}>Loading...</div>;
+  }
+
+  // Redirect to login if not authenticated and not on login page
+  if (!isAuthenticated && location.pathname !== '/login') {
+    navigate('/login');
+    return null;
+  }
+
   return <Routes>
+    <Route path="/login" element={<LoginPage />} />
     <Route path="/" element={<Layout><Dashboard /></Layout>} />
     <Route path="/mood" element={<Layout><MoodPage /></Layout>} />
     <Route path="/assistant" element={<Layout><AssistantPage /></Layout>} />
@@ -893,7 +916,8 @@ export default function App() {
     <Route path="/settings" element={<Layout><SettingsPage /></Layout>} />
     <Route path="/support" element={<Layout><SupportPage /></Layout>} />
     <Route path="/privacy" element={<Layout><PrivacyPage /></Layout>} />
-    <Route path="/login" element={<Layout><LoginPage /></Layout>} />
     <Route path="*" element={<Layout><NotFound /></Layout>} />
   </Routes>;
 }
+
+export default App;

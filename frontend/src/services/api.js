@@ -1,14 +1,35 @@
 const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+
 async function request(path, options = {}) {
   try {
-    const response = await fetch(`${BASE}${path}`, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
-    if (!response.ok) throw new Error(`API error ${response.status}`);
+    const headers = {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+      ...(options.headers || {})
+    };
+    
+    const response = await fetch(`${BASE}${path}`, { 
+      headers,
+      ...options 
+    });
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw { response: { data: error }, status: response.status };
+    }
+    
     return response.json();
   } catch (error) {
     console.error('API request failed:', error);
     throw error;
   }
 }
+
 export const api = {
   health: () => request('/health'),
   resources: () => request('/api/resources'),
@@ -20,6 +41,19 @@ export const api = {
   deleteTask: (id) => request(`/api/tasks/${id}`, { method: 'DELETE' }),
   plan: (data) => request('/api/plans', { method: 'POST', body: JSON.stringify(data) }),
   chat: (message) => request('/api/chat', { method: 'POST', body: JSON.stringify({ message }) }),
+  // Authentication
+  login: (email, password) => request('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  register: (email, password, full_name) => request('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password, full_name }) }),
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return Promise.resolve();
+  },
+  getCurrentUser: () => {
+    const token = localStorage.getItem('token');
+    if (!token) return Promise.reject(new Error('No token'));
+    return request('/api/auth/me?token=' + token);
+  },
   // Technical PFE Assistant API
   projects: () => request('/api/projects'),
   createProject: (data) => request('/api/projects', { method: 'POST', body: JSON.stringify(data) }),
