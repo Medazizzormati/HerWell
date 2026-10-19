@@ -25,6 +25,12 @@ const navItems = [
 function Layout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    api.logout();
+    navigate('/login');
+  };
 
   useEffect(() => {
     // Trigger scroll reveal animations
@@ -64,6 +70,21 @@ function Layout({ children }) {
         ))}
       </div>
       <div className="nav-tools">
+        <button 
+          onClick={handleLogout}
+          style={{
+            padding: '0.5rem 1rem',
+            background: 'var(--peach)',
+            color: 'var(--purple-dark)',
+            border: 'none',
+            borderRadius: 'var(--radius-sm)',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            marginRight: '0.5rem'
+          }}
+        >
+          Logout
+        </button>
         <button className="menu-btn" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
       </div>
     </nav>
@@ -881,7 +902,7 @@ function NotFound() {
   </div>;
 }
 
-function App() {
+export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -919,5 +940,3 @@ function App() {
     <Route path="*" element={<Layout><NotFound /></Layout>} />
   </Routes>;
 }
-
-export default App;
