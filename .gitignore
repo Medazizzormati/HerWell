@@ -26,6 +26,8 @@ dmypy.json
 .env.local
 .env.*.local
 *.log
+*.db
+*.sqlite
 
 # IDE
 .vscode/
